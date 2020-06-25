@@ -13,7 +13,7 @@ class [[eosio::contract]] dividend : public eosio::contract {
 public:
     dividend( eosio::name receiver, eosio::name code, eosio::datastream<const char*> ds ): eosio::contract(receiver, code, ds)
     {}
-    [[eosio::action]] void distribute(uint64_t id, uint64_t slice_at_secs_since_epoch);
+    [[eosio::action]] void distribute(uint64_t id, time_point_sec slice_at);
     [[eosio::action]] void pay(uint64_t distribution_id, eosio::name pay_to, eosio::asset quantity);
     
 
@@ -27,7 +27,7 @@ public:
     static constexpr eosio::name _payer = "payer"_n;
     
     static constexpr eosio::name _token_contract = "eosio.token"_n;
-    static constexpr eosio::symbol _op_symbol     = eosio::symbol(eosio::symbol_code("CRU"), 0);
+    static constexpr eosio::symbol _op_symbol     = eosio::symbol(eosio::symbol_code("USDU"), 2);
 
 
 

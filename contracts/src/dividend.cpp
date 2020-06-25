@@ -1,4 +1,4 @@
-#include <dividend/dividend.hpp>
+#include "../include/dividend/dividend.hpp"
 
 using namespace eosio;
 
@@ -21,10 +21,10 @@ using namespace eosio;
    *
    */
 
-  [[eosio::action]] void dividend::distribute(uint64_t id, uint64_t slice_at_secs_since_epoch){
+  [[eosio::action]] void dividend::distribute(uint64_t id, time_point_sec slice_at){
     require_auth(dividend::_findir); 
 
-    eosio::check(slice_at_secs_since_epoch > now(), "Distribution time should be in the future");
+    eosio::check(slice_at > eosio::time_point_sec(now()), "Distribution time should be in the future");
     
     dividend::distribution_index distributions(dividend::_self, dividend::_self.value);
     auto distribution = distributions.find(id);
@@ -32,7 +32,7 @@ using namespace eosio;
     eosio::check(distribution != distributions.end(), "Distribution is not found");
 
     distributions.modify(distribution, dividend::_self, [&](auto &d){
-      d.slice_at = eosio::time_point_sec(slice_at_secs_since_epoch);
+      d.slice_at = slice_at;
     });
 
   };

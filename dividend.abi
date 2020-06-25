@@ -1,0 +1,89 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jun 25 12:05:20 2020",
+    "version": "eosio::abi/1.1",
+    "structs": [
+        {
+            "name": "distribute",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "slice_at",
+                    "type": "time_point_sec"
+                }
+            ]
+        },
+        {
+            "name": "distribution",
+            "base": "",
+            "fields": [
+                {
+                    "name": "id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "slice_at",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "last_pay_time",
+                    "type": "time_point_sec"
+                },
+                {
+                    "name": "total_asset_on_pay",
+                    "type": "asset"
+                },
+                {
+                    "name": "total_asset_payed",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "pay",
+            "base": "",
+            "fields": [
+                {
+                    "name": "distribution_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "pay_to",
+                    "type": "name"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
+                }
+            ]
+        }
+    ],
+    "types": [],
+    "actions": [
+        {
+            "name": "distribute",
+            "type": "distribute",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "pay",
+            "type": "pay",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "distribution",
+            "type": "distribution",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "ricardian_clauses": [],
+    "variants": [],
+    "abi_extensions": []
+}
