@@ -1,7 +1,17 @@
 {
-    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Thu Jun 25 12:05:20 2020",
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT Tue Dec  8 16:52:14 2020",
     "version": "eosio::abi/1.1",
     "structs": [
+        {
+            "name": "cancel",
+            "base": "",
+            "fields": [
+                {
+                    "name": "distribution_id",
+                    "type": "uint64"
+                }
+            ]
+        },
         {
             "name": "distribute",
             "base": "",
@@ -13,6 +23,10 @@
                 {
                     "name": "slice_at",
                     "type": "time_point_sec"
+                },
+                {
+                    "name": "quantity",
+                    "type": "asset"
                 }
             ]
         },
@@ -63,6 +77,11 @@
     ],
     "types": [],
     "actions": [
+        {
+            "name": "cancel",
+            "type": "cancel",
+            "ricardian_contract": ""
+        },
         {
             "name": "distribute",
             "type": "distribute",

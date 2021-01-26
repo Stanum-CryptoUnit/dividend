@@ -21,15 +21,16 @@ using namespace eosio;
    *
    */
 
-  [[eosio::action]] void dividend::distribute(uint64_t id, time_point_sec slice_at){
+  [[eosio::action]] void dividend::distribute(uint64_t id, time_point_sec slice_at, eosio::asset quantity){
     require_auth(dividend::_findir); 
 
-    eosio::check(slice_at > eosio::time_point_sec(now()), "Distribution time should be in the future");
+    // eosio::check(slice_at > eosio::time_point_sec(now()), "Distribution time should be in the future");
     
     dividend::distribution_index distributions(dividend::_self, dividend::_self.value);
     auto distribution = distributions.find(id);
 
     eosio::check(distribution != distributions.end(), "Distribution is not found");
+    eosio::check(quantity == distribution -> total_asset_on_pay, "Quantity is not equal distribution object quantity");
 
     distributions.modify(distribution, dividend::_self, [&](auto &d){
       d.slice_at = slice_at;
@@ -60,9 +61,6 @@ using namespace eosio;
     auto distribution = distributions.find(distribution_id);
     eosio::check(distribution != distributions.end(), "Distribution object is not found");
 
-    eosio::check(distribution -> slice_at != eosio::time_point_sec(0), "Distribution is not started yet");
-    eosio::check(distribution -> slice_at <= eosio::time_point_sec(now()), "Distribution is not started yet");
-
     eosio::check(distribution -> total_asset_payed + quantity <= distribution -> total_asset_on_pay, "Distribution overflow on pay action");
 
     distributions.modify(distribution, dividend::_payer, [&](auto &d){
@@ -79,8 +77,34 @@ using namespace eosio;
   };
 
 
+  /*  
+   *  cancell( uint64_t distribution_id)
+   *    - distribution_id - идентификатор объекта начисления
+
+   *    Авторизация:
+   *      - _findir@active
+
+   *    Метод отмены распределения и возврата токенов на баланс _findir.
+   */
 
 
+  [[eosio::action]] void dividend::cancel(uint64_t distribution_id){
+    require_auth(dividend::_findir);
+
+    dividend::distribution_index distributions(dividend::_self, dividend::_self.value);    
+
+    auto distr = distributions.find(distribution_id);
+
+    eosio::check(distr -> slice_at == eosio::time_point_sec(0), "Cannot cancel started distribution");
+
+    action(
+        permission_level{ dividend::_self, "active"_n },
+        dividend::_token_contract, "transfer"_n,
+        std::make_tuple( dividend::_self, _findir, distr -> total_asset_on_pay , std::string("Cancel dividend object")) 
+    ).send();
+
+    distributions.erase(distr);
+  }
 
 
   /*  
@@ -119,6 +143,8 @@ extern "C" {
             execute_action(name(receiver), name(code), &dividend::pay);
           } else if (action == "distribute"_n.value){
             execute_action(name(receiver), name(code), &dividend::distribute);
+          } else if (action == "cancel"_n.value){
+            execute_action(name(receiver), name(code), &dividend::cancel);
           }          
         } else {
           if (action == "transfer"_n.value){
